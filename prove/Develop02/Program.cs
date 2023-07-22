@@ -25,16 +25,16 @@ class Program
             switch (input)
             {
                 case "1":
-                    journal.WriteNewEntry();
+                    journal.AddEntry();
                     break;
                 case "2":
-                    journal.DisplayJournal();
+                    journal.DisplayAll();
                     break;
                 case "3":
-                    journal.SaveJournal();
+                    journal.SaveToFile();
                     break;
                 case "4":
-                    journal.LoadJournal();
+                    journal.LoadFromFile();
                     break;
                 case "5":
                     done = true;
@@ -51,12 +51,12 @@ class Program
 class Journal
 {
     private List<Entry> entries = new List<Entry>();
-    private Random random = new Random();
 
-    public void WriteNewEntry()
+    public void AddEntry()
     {
         Entry entry = new Entry();
-        entry.Prompt = GetRandomPrompt();
+        PromptGenerator prompt = new PromptGenerator();
+        entry.Prompt = prompt.GetRandomPrompt();
         Console.WriteLine(entry.Prompt);
         Console.Write("Enter your response: ");
         entry.Response = Console.ReadLine();
@@ -64,15 +64,15 @@ class Journal
         entries.Add(entry);
     }
 
-    public void DisplayJournal()
+    public void DisplayAll()
     {
         foreach (Entry entry in entries)
         {
-            Console.WriteLine(entry);
+            entry.Display();
         }
     }
 
-    public void SaveJournal()
+    public void SaveToFile()
     {
         Console.Write("Enter a filename: ");
         string filename = Console.ReadLine();
@@ -84,7 +84,7 @@ class Journal
         writer.Close();
     }
 
-    public void LoadJournal()
+    public void LoadFromFile()
     {
         Console.Write("Enter a filename: ");
         string filename = Console.ReadLine();
@@ -102,20 +102,6 @@ class Journal
         }
         reader.Close();
     }
-
-    private string GetRandomPrompt() 
-    {
-        string[] prompts = new string[]
-        {
-            "Who was the most interesting person I interacted with today?",
-            "What was the best part of my day?",
-            "How did I see the hand of the Lord in my life today?",
-            "What was the strongest emotion I felt today?",
-            "If I had one thing I could do over today, what would it be?"
-        };
-        int index = random.Next(prompts.Length);
-        return prompts[index];
-    }
 }
 
 class Entry
@@ -124,10 +110,31 @@ class Entry
     public string Response { get; set; }
     public string Date { get; set; }
 
-    public override string ToString()
+    public void Display()
     {
-        return $"{Prompt}|{Response}|{Date}";
+        Console.WriteLine($"{Prompt} {Response} {Date}");
     }
 }
+
+class PromptGenerator
+{
+    private string[] prompts = new string[]
+    {
+        "Who was the most interesting person I interacted with today?",
+        "What was the best part of my day?",
+        "How did I see the hand of the Lord in my life today?",
+        "What was the strongest emotion I felt today?",
+        "If I had one thing I could do over today, what would it be?"
+    };
+    private Random random = new Random();
+
+    public string GetRandomPrompt()
+    {
+        int index = random.Next(prompts.Length);
+        return prompts[index];
+    }
+}
+
+
 
 

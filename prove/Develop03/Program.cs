@@ -1,53 +1,58 @@
 /*
 Week 03 Develop: Scripture Memorizer
 
-one for the scripture itself, 
-one for the reference (for example "John 3:16"), 
-and to represent a word in the scripture.
-Provide multiple constructors for the scripture reference to handle 
-the case of a single verse and a verse range ("Proverbs 3:5" or "Proverbs 3:5-6").
-
 */
 
 using System;
 using System.Collections.Generic;
 
-
-    class Program
+class Program
+{
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
+        Scripture scripture = new Scripture("John", 3, 16, "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.");
+        bool done = false;
+        while (!done)
         {
-            Scripture scripture = new Scripture("John 3:16", "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.");
-            bool done = false;
-            while (!done)
+            Console.Clear();
+            scripture.Display();
+            Console.WriteLine("");
+            Console.WriteLine("Press enter to hide more words or type quit to exit.");
+            string input = Console.ReadLine();
+            if (input.ToLower() == "quit")
             {
-                Console.Clear();
-                scripture.Display();
-                Console.WriteLine("");
-                Console.WriteLine("Press enter to hide more words or type quit to exit.");
-                string input = Console.ReadLine();
-                if (input.ToLower() == "quit")
-                {
-                    done = true;
-                }
-                else
-                {
-                    scripture.HideWords();
-                }
+                done = true;
+            }
+            else
+            {
+                scripture.HideRandomWords();
             }
         }
     }
+}
+
 
 public class Scripture
+
 {
-    private string reference;
+    private Reference reference;
     private string text;
     private List<Word> words;
 
-    public Scripture(string reference, string text)
+    public Scripture(string book, int chapter, int verse, string text)
     {
-        this.reference = reference;
-        this.text = text;
+        reference = new Reference(book, chapter, verse);
+        words = new List<Word>();
+        string[] wordArray = text.Split(' ');
+        foreach (string word in wordArray)
+        {
+            words.Add(new Word(word));
+        }
+    }
+
+    public Scripture(string book, int chapter, int verseStart, int verseEnd, string text)
+    {
+        reference = new Reference(book, chapter, verseStart, verseEnd);
         words = new List<Word>();
         string[] wordArray = text.Split(' ');
         foreach (string word in wordArray)
@@ -58,14 +63,14 @@ public class Scripture
 
     public void Display()
     {
-        Console.WriteLine(reference);
+        reference.GetDisplayText();
         foreach (Word word in words)
         {
-            word.Display();
+            word.Show();
         }
     }
 
-    public void HideWords()
+    public void HideRandomWords()
     {
         Random random = new Random();
         int wordCount = words.Count;
@@ -81,17 +86,21 @@ public class Scripture
 public class Word
 {
     private string text;
-    private bool hidden;
+    private bool isHidden;
 
     public Word(string text)
     {
         this.text = text;
-        hidden = false;
+        isHidden = false;
     }
 
-    public void Display()
+    public void Hide()
     {
-        if (hidden)
+        isHidden = true;
+    }
+    public void Show()
+    {
+        if (isHidden)
         {
             Console.Write("____ ");
         }
@@ -101,10 +110,34 @@ public class Word
         }
     }
 
-    public void Hide()
-    {
-        hidden = true;
-    }
+    
 }
 
+public class Reference
+{
+    private string book;
+    private int chapter;
+    private int verse;
+    private int endVerse;
+
+    public Reference(string book, int chapter, int verse)
+    {
+        this.book = book;
+        this.chapter = chapter;
+        this.verse = verse;
+    }
+
+    public Reference(string book, int chapter, int verseStart, int verseEnd)
+    {
+        this.book = book;
+        this.chapter = chapter;
+        this.verse = verseStart;
+        this.endVerse = verseEnd;
+    }
+
+    public void GetDisplayText()
+    {
+        Console.WriteLine(book + " " + chapter + ":" + verse);
+    }
+}
 
