@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 public class Activity
 {
     private string _name;
@@ -95,10 +96,12 @@ public class BreathingActivity : Activity
     public void Run()
     {
         base.Start();
-        Console.WriteLine("How many seconds would you like to do this activity?");
+        Console.WriteLine("How long, in seconds would you like for your session?");
         Duration = int.Parse(Console.ReadLine());
         base.ShowCountDown(3);
-        for (int i = 0; i < Duration; i++)
+        DateTime startTime = DateTime.Now;
+        DateTime endTime = DateTime.Now.AddSeconds(Duration);
+        while (DateTime.Now < endTime)
         {
             Console.WriteLine("Breathe in...");
             base.ShowCountDown(3);
@@ -130,15 +133,20 @@ public class ListingActivity: Activity
     public void Run()
     {
         base.Start();
-        Console.WriteLine("How many seconds would you like to do this activity?");
+        Console.WriteLine("How long, in seconds would you like for your session?");
         Duration = int.Parse(Console.ReadLine());
+
         base.ShowCountDown(3);
         Console.WriteLine("Begin listing...");
         System.Threading.Thread.Sleep(1000);
         List<string> items = new List<string>();
-        for (int i = 0; i < Duration; i++)
+        DateTime startTime = DateTime.Now;
+        DateTime endTime = DateTime.Now.AddSeconds(Duration);
+
+        Console.WriteLine(GetRandomPrompt());
+        while (DateTime.Now < endTime)
         {
-            Console.WriteLine("Enter an item:");
+            Console.WriteLine("> ");
             string item = Console.ReadLine();
             items.Add(item);
             _count++;
@@ -182,18 +190,22 @@ public class ReflectingActivity : Activity
     public void Run()
     {
         base.Start();
-        Console.WriteLine("How many seconds would you like to do this activity?");
+        Console.WriteLine("How long, in seconds would you like for your session?");
         Duration = int.Parse(Console.ReadLine());
         base.ShowCountDown(3);
         Random random = new Random();
         string prompt = _prompts[random.Next(_prompts.Count)];
+
+        DateTime startTime = DateTime.Now;
+        DateTime endTime = DateTime.Now.AddSeconds(Duration);
         Console.WriteLine(prompt);
-        System.Threading.Thread.Sleep(1000);
-        for (int i = 0; i < Duration; i++)
+        System.Threading.Thread.Sleep(2000);
+
+        while (DateTime.Now < endTime)
         {
             string question = _questions[random.Next(_questions.Count)];
             Console.WriteLine(question);
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(3000);
         }
         base.End();
     }
@@ -217,11 +229,12 @@ public class Program
 {
     public static void Main()
     {
-        Console.WriteLine("Welcome to the Mindfulness Program!");
-        Console.WriteLine("Please choose an activity:");
-        Console.WriteLine("1. Breathing");
-        Console.WriteLine("2. Reflection");
-        Console.WriteLine("3. Listing");
+        
+        Console.WriteLine("Menu Options:");
+        Console.WriteLine("1. Start Breathing Activity");
+        Console.WriteLine("2. Start Reflection Activity");
+        Console.WriteLine("3. Start Listing Activity");
+        Console.WriteLine("Select a choice from the menu:");
         int choice = int.Parse(Console.ReadLine());
         if (choice == 1)
         {
